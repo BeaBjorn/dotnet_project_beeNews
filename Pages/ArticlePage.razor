@@ -1,0 +1,64 @@
+@page "/article/{id:int}"
+@inject HttpClient HttpClient
+
+@if (article == null)
+{
+    <p>Loading article...</p>
+}
+else
+{
+    <div class="narrow-container">
+    <h1 class="my-5">@article.Title</h1>
+    
+    <div class="row"> 
+        <p class="col">By: @article.CreatedBy</p>
+        <p class="col text-end">Published: @article.CreatedDate.ToString("HH:mm") on @article.CreatedDate.ToString("dd MMMM yyyy")</p>
+    </div>
+    @if (!string.IsNullOrEmpty(article.ImageName))
+        {
+            <img src="http://localhost:5188/images/@article.ImageName" alt="@article.Title" class="img-fluid" />
+        }
+
+    @if(@article.AttributionName != null)
+    {
+        <p>Photo by:  
+            @if(@article.AttributionUrl != null)
+            {
+                <a href="http://localhost:5188/images/@article.AttributionUrl">@article.AttributionName</a>
+            }else{
+              @article.AttributionName  
+            }
+        </p> 
+    }
+    
+    @if(@article.Content != null)
+    {
+        <div class="pb-5">@((MarkupString)article.Content)</div>
+    }
+    </div>
+}
+
+@code {
+    [Parameter]
+    public int id { get; set; }
+
+    private Article? article;
+
+    // Http request
+    protected override async Task OnInitializedAsync()
+    {
+        article = await HttpClient.GetFromJsonAsync<Article>($"http://localhost:5188/api/article/{id}");
+    }
+
+    public class Article
+    {
+        public int ArticleId { get; set; }
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public string? ImageName { get; set; }
+        public string? AttributionName { get; set; }
+        public string? AttributionUrl { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+    }
+}

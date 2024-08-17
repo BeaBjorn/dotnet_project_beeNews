@@ -1,0 +1,57 @@
+﻿@* <nav class="navbar navbar-dark mb-3">
+<div class="container">
+<NavLink class="me-5" href="/" Match="NavLinkMatch.All">
+<img width=" 200" class="logo" src="/bee-logotype.svg" alt="bee news logo">
+</NavLink>
+<div class="navbar navbar-expand-md" id="navbarNav">
+
+<NavLink class="nav-link d-inline" href="/" Match="NavLinkMatch.All">
+Home
+</NavLink>
+
+<NavLink class="nav-link d-inline" href="news">
+News
+</NavLink>
+
+</div>
+</div>
+</nav> *@
+
+<nav class="navbar navbar-expand-lg navbar-dark">
+    <div class="container">
+        <NavLink class="me-5" href="/" Match="NavLinkMatch.All">
+            <img width=" 200" class="logo" src="/bee-logotype.svg" alt="bee news logo">
+        </NavLink>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+            aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav flex-grow-1">
+                <li class="nav-item active">
+                    <NavLink class="nav-link d-inline" href="/" Match="NavLinkMatch.All">
+                        Home
+                    </NavLink>
+                </li>
+                <li class="nav-item">
+                    <NavLink class="nav-link d-inline" href="news">
+                        News
+                    </NavLink>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+</nav>
+
+@* @code {
+private bool collapseNavMenu = true;
+
+private string? NavMenuCssClass => collapseNavMenu ? "collapse" : null;
+
+private void ToggleNavMenu()
+{
+collapseNavMenu = !collapseNavMenu;
+}
+} *@

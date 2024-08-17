@@ -1,0 +1,110 @@
+@page "/news"
+@inject HttpClient HttpClient
+
+<h1 class="my-5">Latest news</h1>
+<p>Filter the news by selecting a category below.</p>
+
+<!-- Category Navigation -->
+<div class="mb-3">
+    @if (categories != null)
+    {
+        <button @onclick="() => OnCategoryChanged(0)" class="btn delete-button me-2 mb-2 mb-lg-0">
+            All Articles
+        </button>
+        @foreach (var category in categories)
+        {
+            <button @onclick="() => OnCategoryChanged(category.CategoryId)" class="btn purple-button me-2 mb-2 mb-lg-0">
+                @category.Name
+            </button>
+        }
+    }
+    else
+    {
+        <p>Loading categories...</p>
+    }
+</div>
+
+@if (articles == null)
+{
+    <p>Loading articles...</p>
+}
+else if (articles.Length == 0)
+{
+    <p class="my-5">There are no articles in this category, try another category or <span class="all-articles"
+        @onclick="() => OnCategoryChanged(0)">view all articles</span>.</p>
+}
+else
+{
+    <div class="row pb-5">
+    @foreach (var article in articles)
+        {
+            <div class="col-12 col-md-6 col-lg-4 my-3">
+                <div class="card h-100 position-relative">
+                    @if (string.IsNullOrEmpty(article.ImageName))
+                    {
+                        <img src="/placeholder.png" alt="" class="card-img-top img-fluid" />
+                    }
+                    else
+                    {
+                        <img src="http://localhost:5188/images/@article.ImageName" alt="" class="img-fluid" />
+                    }
+                    <div class="card-body">
+                        <a class="stretched-link text-decoration-none text-black" href="/article/@article.ArticleId">
+                            <h2 class="h4">@article.Title</h2>
+                        </a>
+                        <p class="card-text">Author: @article.CreatedBy</p>
+                        <p class="card-text">Published: @article.CreatedDate.ToString("HH:mm") on
+                            @article.CreatedDate.ToString("dd MMMM yyyy")</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    // Models for articles and categories
+    public class Article
+    {
+        public int ArticleId { get; set; }
+        public string? Title { get; set; }
+        public string? Content { get; set; }
+        public string? ImageName { get; set; }
+        public string? AttributionName { get; set; }
+        public string? AttributionUrl { get; set; }
+        public string? CreatedBy { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public int CategoryId { get; set; }
+    }
+
+    public class Category
+    {
+        public int CategoryId { get; set; }
+        public string? Name { get; set; }
+    }
+
+    private Article[]? articles;
+    private Category[]? categories;
+    private int selectedCategoryId = 0; // Default to 0 for "All Categories"
+
+    protected override async Task OnInitializedAsync()
+    {
+        categories = await HttpClient.GetFromJsonAsync<Category[]>("http://localhost:5188/api/category");
+        await LoadArticles();
+    }
+
+    private async Task LoadArticles()
+    {
+        var url = selectedCategoryId == 0
+        ? "http://localhost:5188/api/article"
+        : $"http://localhost:5188/api/article?categoryId={selectedCategoryId}";
+
+        articles = await HttpClient.GetFromJsonAsync<Article[]>(url);
+    }
+
+    private async Task OnCategoryChanged(int categoryId)
+    {
+        selectedCategoryId = categoryId;
+        await LoadArticles();
+    }
+}
