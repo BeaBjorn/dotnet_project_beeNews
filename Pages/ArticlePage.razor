@@ -50,6 +50,7 @@ else
         article = await HttpClient.GetFromJsonAsync<Article>($"http://localhost:5188/api/article/{id}");
     }
 
+    //Defines model for Article
     public class Article
     {
         public int ArticleId { get; set; }
